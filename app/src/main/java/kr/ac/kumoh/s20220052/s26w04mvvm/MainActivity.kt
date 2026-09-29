@@ -45,16 +45,23 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
+    var count by retain { mutableIntStateOf(0) }
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        Counter(Modifier.padding(innerPadding))
+        Counter(
+            Modifier.padding(innerPadding),
+            count = count
+        ) {
+            count = it
+        }
     }
 }
 
 @Composable
 fun Counter(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    count: Int,
+    onChangeCount: (Int) -> Unit
 ) {
-    var count by retain { mutableIntStateOf(0) }
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     Column(
@@ -80,7 +87,7 @@ fun Counter(
             Button(
                 modifier = Modifier.weight(1f),
                 onClick = {
-                    count++
+                    onChangeCount(count + 1)
                 }
             ) {
                 Text("+", fontSize = 30.sp)
@@ -89,7 +96,7 @@ fun Counter(
             if (expanded) {
                 Button(
                     onClick = {
-                        count--
+                        onChangeCount(count - 1)
                         expanded = false
                     }
                 ) {
@@ -98,7 +105,7 @@ fun Counter(
 
                 Button(
                     onClick = {
-                        count = 0
+                         onChangeCount(0)
                         expanded = false
                     }
                 ) {
