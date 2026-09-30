@@ -1,9 +1,11 @@
 package kr.ac.kumoh.s20220052.s26w04mvvm
 
 import android.os.Bundle
+import android.util.Log.i
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,26 +34,30 @@ import kr.ac.kumoh.s20220052.s26w04mvvm.ui.theme.S26W04MvvmTheme
 import kotlin.math.exp
 
 class MainActivity : ComponentActivity() {
+    private val counterViewModel: CounterViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             S26W04MvvmTheme {
-               MainScreen()
+               MainScreen(counterViewModel)
             }
         }
     }
 }
 
 @Composable
-fun MainScreen() {
-    var count by retain { mutableIntStateOf(0) }
+fun MainScreen(
+    viewModel: CounterViewModel
+) {
+//    var count by retain { mutableIntStateOf(0) }
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Counter(
             Modifier.padding(innerPadding),
-            count = count
-        ) {
-            count = it
-        }
+            count = viewModel.counter.count,
+            onIncrement = { viewModel.incrementCount() },
+            onDecrement = { viewModel.decrementCount() },
+            onReset = { viewModel.resetCount() }
+        )
     }
 }
